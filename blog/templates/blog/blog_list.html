@@ -1,0 +1,165 @@
+{% extends 'base.html' %}
+<!-- extends必须是模板的第一个标签 -->
+{% load staticfiles%}
+{% load comment_tags %}
+{% load likes_tags %}
+{% block header_extends %}
+ <link rel="stylesheet" type="text/css" href="{% static 'blog/blog.css'%}">
+{% endblock %}
+
+{% comment %}
+{# 没有使用模板嵌套的代码#}
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>我的网站</title>
+</head>
+<body>
+    <div>
+    个人博客网站
+    </div>
+    <hr>
+    
+    {% for blog in blogs %}
+        <a href="{% url 'blog_detail' blog.pk %}">
+            <h3>{{ blog.title }}</h3>
+        </a><!-- #blog.pk是参数 -->
+        <p>{{ blog.content|truncatechars:30 }}</p><!-- 使用过滤器，显示一部分内容 -->
+        <!-- 如果是过滤英文使用<p>{{ blog.content|truncatewords:30 }}</p> -->
+    {% empty %}
+    <p>--暂无博客，敬请期待</p>
+    <!-- 如果为空则输出，是个条件判断的标签 -->
+    {% endfor %}
+    <!-- <p>一共有{{ blogs|length }}篇博客</p> -->
+    <!-- 此过滤器统计列表集合的个数 -->
+    <p>一共有{{ blogs_count}}篇博客</p>
+    <!-- 此过滤器统计列表集合的个数 -->
+    {#这个表示初始模板标签，在这里面的东西是不会显示#}
+    {#模板内容可参考https://docs.djangoproject.com/en/2.1/ref/templates/builtins/这个网站#}
+</body>
+</html>
+{% endcomment %}
+
+
+{# 页面标题 #}
+{% block title %}
+我的网站
+{% endblock %}
+{# 页面内容 #}
+{% block nav_blog_active %}
+active
+{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-xs-12 col-sm-8 col-md-9 col-lg-10">
+            <!-- 这个是小的适用，大的也适用，大的适用，小的不适用，默认撑满。 -->
+            <div class="panel panel-default">
+            <div class="panel-heading">
+            <h3>{% block blog_list_title %}博客列表{% endblock %}</h3>
+            <!-- 此过滤器统计列表集合的个数 -->
+            </div>
+            <div class="panel-body">
+            {% for blog in page_of_blogs.object_list %}
+            <div class="blog">
+             <h3><a href="{% url 'blog_detail' blog.pk %}">
+            {{ blog.title }}</a></h3><!-- #blog.pk是参数 -->
+            <p class="blog-info">
+                <span class="glyphicon glyphicon-tag" aria-hidden="true"></span><a href="{% url 'blogs_with_type' blog.blog_type.pk%}">{{blog.blog_type}}</a>&nbsp;&nbsp;<!-- 空格 -->
+                <span class="glyphicon glyphicon-time" aria-hidden="true"></span>{{ blog.created_time|date}}&nbsp;&nbsp;
+                <span>阅读({{ blog.get_read_num}})</span>&nbsp;&nbsp;
+                <span>評論({% get_comment_count blog %})</span>&nbsp;&nbsp;
+                <span>点赞({% get_like_count blog %})</span>
+            </p>
+             <p>{{ blog.content|striptags|truncatechars:120 }}</p><!-- 使用过滤器，显示一部分内容 --><!-- 使用striptags可以先去掉html标签 -->
+             <!-- 如果是过滤英文使用<p>{{ blog.content|truncatewords:30 }}</p> -->
+            </div>
+            {% empty %}
+            <div class="blog">
+            <h3>--暂无博客，敬请期待</h3>
+             <!-- 如果为空则输出，是个条件判断的标签 -->
+            </div>
+            {% endfor %}
+            <!-- <p>一共有{{ blogs|length }}篇博客</p> -->
+            <!-- 此过滤器统计列表集合的个数 -->
+            {#这个表示初始模板标签，在这里面的东西是不会显示#}
+            {#模板内容可参考https://docs.djangoproject.com/en/2.1/ref/templates/builtins/这个网站#}
+            </div>
+            </div>
+            <div>
+                <div class="paginator">
+                    <ul class="pagination">
+                        {# 上一页 #}
+                        <li>
+                            {% if page_of_blogs.has_previous %}
+                            <a href="?page={{page_of_blogs.previous_page_number}}" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                            </a>
+                            {% else %}
+                            <span aria-hidden="true">&laquo;</span>
+                            {% endif %}
+                        </li>
+                        {#全部页码#}
+                        {% for page_num in page_range%}
+                            {% if page_num == page_of_blogs.number %}
+                                <li class="active"><span>{{page_num}}</span></li>
+                            {% else %}
+                                {% if page_num == '...' %}
+                                    <li><span>{{page_num}}<span></li>
+                                {% else %}
+                                    <li><a href="?page={{page_num}}">{{page_num}}</a></li>
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                        {# 下一页 #}
+                        <li>
+                            {% if page_of_blogs.has_next %}
+                            <a href="?page={{page_of_blogs.next_page_number}}" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                            </a>
+                            {% else %}
+                            <span aria-hidden="true">&raquo;</span>
+                            {% endif %}
+                        </li>
+                    </ul>
+                    <p>(一共有{{ page_of_blogs.paginator.count}}篇博客),当前第{{page_of_blogs.number}}页,一共有{{page_of_blogs.paginator.num_pages}}页</p>
+                </div>
+            </div>
+        </div>
+        <div class=" hidden-xs col-sm-4 col-md-3 col-lg-2">
+            <div class="panel panel-default">
+                <div class="panel-heading"><h3>博客分类</h3></div>
+                <div class="panel-body">
+                <ul class="blog-types">
+                    {% for blog_type in blog_types %}
+                    <li><a href="{% url 'blogs_with_type' blog_type.pk%}">
+                    {{ blog_type.type_name }}({{blog_type.blog_count}})</a></li>
+                    {% empty %}
+                    <li>
+                    暂无分类    
+                    </li>
+                    {% endfor%}
+                    </ul>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    日期分类
+                </div>
+                <div class="panel-body">
+                    <ul>
+                        {% for blog_date,blog_count in blog_dates.items %}
+                        <li>
+                            <a href="{% url 'blogs_with_date' blog_date.year blog_date.month%}">{{blog_date|date:"Y年m月"}}({{blog_count}})</a></li>
+                        {% endfor%}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+ 
+{% endblock %}
+
+   

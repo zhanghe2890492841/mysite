@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+<!-- 要加载相应的模板库 -->
+{% block title %}
+我的网站|首页
+{% endblock %}
+
+{% block nav_home_active %}
+active
+{% endblock %}
+
+{% block content %}
+<h3 class="home-content">欢迎访问我的网站随便看</h3>
+
+<!-- 图表容器 DOM -->
+    <div id="container" style="width: 600px;height:400px;"></div>
+    <!-- 今天24小时内的热门博客 -->
+    <div class="hot-data">
+        <h3>今天热门点击</h3>
+    <ul>
+        {% for hot_data in today_hot_data %}<li> <a href="{% url 'blog_detail' hot_data.content_object.pk%}">{{hot_data.content_object.title}}</a>({{ hot_data.read_num}})</li>
+        {% empty %}
+        <li>今天暂时没有热门博客</li>
+        {% endfor %}
+    </ul>
+    </div>
+    <div class="hot-data">
+         <h3>昨天热门点击</h3>
+        <ul>
+        {% for hot_data in yesterday_hot_data %}<li> <a href="{% url 'blog_detail' hot_data.content_object.pk%}">{{hot_data.content_object.title}}</a>({{ hot_data.read_num}})</li>
+        {% empty %}
+        <li>昨天暂时没有热门博客</li>
+        {% endfor %}
+    </ul>
+    </div>
+    <div class="hot-data">
+        <h3>本周热门博客</h3>
+        <ul>
+        {% for hot_blog in hot_data_for_7_days %} <li><a href="{% url 'blog_detail' hot_blog.id%}">{{hot_blog.title}}</a>({{ hot_blog.read_num_sum}})</li>
+        {% empty %}
+        <li>本周暂时没有热门博客</li>
+        {% endfor %}
+    </ul>
+    </div>
+    <script>
+        // 图表配置
+        var options = 
+        {
+            chart: {
+                type: 'line'                          //指定图表的类型，默认是折线图（line）
+            },
+            title: {text: null                 // 标题
+            },
+            xAxis: {
+                categories:{{dates|safe}},  // x 轴分类
+            tickmarkPlacement:'on'
+            },
+            yAxis: {
+                title:{ text:null },              // y 轴标题
+                labels:{ enabled:false },
+                gridLineDashStyle:'Dash'
+            },
+            series: [{                              // 数据列
+                name: '阅读量',                        // 数据列名
+                data: {{ read_nums }} 
+                }],
+                            // 数据
+            plotOptions:{
+                line:{
+                    dataLabels:{
+                        enabled: true
+                    }
+                }
+            },
+            legend:{ enabled:false },
+            credits:{ enabled:false },
+        };
+        // 图表初始化函数
+        var chart = Highcharts.chart('container', options);
+    </script>
+{% block header_extends%}
+<link rel="stylesheet" type="text/css" href="{% static 'home.css'%}">
+<script src="http://cdn.hcharts.cn/highcharts/highcharts.js"></script>
+{% endblock%}
+<!-- <style type="text/css">
+    h3.home-content{   
+    font-size: 222%;
+    text-align: center;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+    }
+</style> -->
+    <!-- 上下左右居中这种CSS方法比较猛所以使用类来进行修饰 -->
+    <!-- style="
+    font-size: 222%;
+    text-align: center;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);" -->
+{% endblock %}
+
+

@@ -1,0 +1,68 @@
+{% extends 'blog/blog_list.html' %}
+
+{% block title %}{{blog_type.type_name}}{% endblock %}
+
+{% block blog_list_title %}
+<span>分类:{{blog_type.type_name}}</span>
+<a href="{% url 'blog_list' %}"><span>查看全部博客</span></a>
+{% endblock %}
+
+
+<!-- {# #}这个是单行注释 -->
+{% comment %}
+{#没有使用模板嵌套的代码#}
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <title>{{blog_type.type_name}}</title>
+</head>
+<body>
+    <div>
+    <a href="{% url 'home' %}">个人博客网站</a>
+    </div>
+    <hr>
+    <h3>{{blog_type.type_name}}</h3>
+    {% for blog in blogs %}
+        <a href="{% url 'blog_detail' blog.pk %}">
+            <h3>{{ blog.title }}</h3>
+        </a><!-- #blog.pk是参数 -->
+        <p>{{ blog.content|truncatechars:30 }}</p><!-- 使用过滤器，显示一部分内容 -->
+        <!-- 如果是过滤英文使用<p>{{ blog.content|truncatewords:30 }}</p> -->
+    {% empty %}
+    <p>--暂无博客，敬请期待</p>
+    <!-- 如果为空则输出，是个条件判断的标签 -->
+    {% endfor %}
+    <p>一共有{{ blogs|length }}篇博客</p><!-- 此过滤器统计列表集合的个数 -->
+    <!-- 由于在调用blog_list的时候才会传入blogs_count所以这里不显示 -->
+    <!-- <p>一共有{{ blogs_count}}篇博客</p> --><!-- 此过滤器统计列表集合的个数 -->
+</body>
+</html>
+{% endcomment %}
+
+
+
+<!-- {% block nav_blog_active %}active{% endblock %} -->
+
+{% comment %}
+这是不使用继承blog_list模板时候的代码
+{% block content %}
+<h3>{{blog_type.type_name}}</h3>
+    {% for blog in blogs %}
+        <a href="{% url 'blog_detail' blog.pk %}">
+            <h3>{{ blog.title }}</h3>
+        </a><!-- #blog.pk是参数 -->
+        <p>{{ blog.content|truncatechars:30 }}</p><!-- 使用过滤器，显示一部分内容 -->
+        <!-- 如果是过滤英文使用<p>{{ blog.content|truncatewords:30 }}</p> -->
+    {% empty %}
+    <p>--暂无博客，敬请期待</p>
+    <!-- 如果为空则输出，是个条件判断的标签 -->
+    {% endfor %}
+    <p>一共有{{ blogs|length }}篇博客</p><!-- 此过滤器统计列表集合的个数 -->
+    <!-- 由于在调用blog_list的时候才会传入blogs_count所以这里不显示 -->
+    <!-- <p>一共有{{ blogs_count}}篇博客</p> --><!-- 此过滤器统计列表集合的个数 -->
+{% endblock %}
+
+{% endcomment %}
+
+ 

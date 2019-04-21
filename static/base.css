@@ -1,0 +1,24 @@
+*{
+    margin:0;
+    padding:0;
+}
+body{
+    margin-top: 80px!important;
+}
+ul{
+    list-style-type:none;
+}
+/*div.nav{
+    background: #eee;
+    border-bottom:1px solid #ccc;
+    padding: 10px 5px;
+}*/
+/*div.nav a{
+    text-decoration: none;/*不要下划线*/
+   /* color:black;
+    padding: 5px 10px;*//*内边框上下5px左右10px*/
+/*}*/
+/*div.nav a.logo{
+    display: inline-block;/*设置成一行*/
+/*    font-size:120%;
+}*/

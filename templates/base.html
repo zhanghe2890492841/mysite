@@ -1,0 +1,75 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<!-- !+tab自动补全信息 -->
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"><!-- 告诉IE浏览器选择最新的内核 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 根据不同的屏幕，网站自动相应布局，比如说放到手机上，布局也会自动调整-->
+    <title>{% block title %}{% endblock %}</title>
+    <!-- <link rel="stylesheet" type="text/css" href="/static/base.css"> -->
+    <link rel="stylesheet" type="text/css" href="{% static 'base.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static  'bootstrap-3.3.7/css/bootstrap.min.css' %}">
+    <script type="text/javascript" src="{% static 'jquery-1.12.4.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'bootstrap-3.3.7/js/bootstrap.min.js' %}"></script>
+    {% block header_extends %}{% endblock %}
+</head>
+<body>
+    <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="{% url 'home' %}">个人博客网站
+                </a>
+                <button class="navbar-toggle collapsed" data-target="#navbar-collapse" data-toggle="collapse">
+                    <!-- data-target是显示内容的id -->
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>    <!-- 添加了三条线 -->
+                </button> 
+            </div>
+            <div class="collapse navbar-collapse" id="navbar-collapse"> 
+            <u1 class="nav navbar-nav">
+            <li class="{% block nav_home_active %}{% endblock %}"><a href="/">首页</a></li>
+            <li class="{% block nav_blog_active %}{% endblock %}"><a href="{% url 'blog_list' %}">博客</a></li>
+            </u1>
+            </div>
+           
+        </div>
+    </div>
+
+    <!-- <div class="nav">
+        <a class="logo" href="{% url 'home' %}"><h3>个人博客网站</h3></a>
+        <a href="/">首页</a>
+        <a href="{% url 'blog_list' %}">博客</a>
+
+    </div> -->
+<!--     <hr> -->
+    {% block content %}{% endblock %}
+    {% block script_extends %}{% endblock %}
+{# 下面是标签style来写CSS#}
+<!-- 将全局的style标签放在最后用作最后的渲染排版 -->
+<!--     <style type="text/css">
+        *{
+            margin:0;/*外边距*/
+            padding:0;/*内边距*/
+        }
+        div.nav{
+            background: #eee;
+            border-bottom:1px solid #ccc;
+            padding: 10px 5px;
+        }
+        div.nav a{
+            text-decoration: none;/*不要下划线*/
+            color:black;
+            padding: 5px 10px;/*内边框上下5px左右10px*/
+        }
+        div.nav a.logo{
+            display: inline-block;/*设置成一行*/
+            font-size:120%;
+        }
+    </style> -->
+
+
+</body>
+</html>

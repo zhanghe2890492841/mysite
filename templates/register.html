@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+<!-- 要加载相应的模板库 -->
+{% block title %}
+我的网站|注册
+{% endblock %}
+
+{% block nav_home_active %}
+active
+{% endblock %}
+
+{% block content %}
+<div class="containter">
+    <div class="row">
+        <div class="col-xs-4 col-xs-offset-4">
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">注册</h3>
+            </div>
+                <div class="panel-body">
+                    <form action="#" method="POST"><!-- 当连接指向自己的话，也可以使用# --><!-- 只不过这个#可以保留当前的get进来的参数，而使用路径的话这个get参数不会保留 -->
+            <!-- 所以不使用{% url  'login' %} -->
+                    {% csrf_token %}
+                    {% for field in reg_form %}<!-- ##把冒号的给去掉,自定义显示form-->
+                        <label for="{{field.id_for_label}}">{{field.label}}</label>
+                        {{field}}
+                        <p class="text-danger">{{field.errors.as_text}}</p>
+                    {% endfor %}
+                    <span class="pull-left text-danger">
+                        {{ reg_form.non_field_errors }}
+                    </span>
+                        <input type="submit" value="注册" class="btn btn-primary pull-right">
+                    </form>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+<!--    <span>用户名:</span>
+        <input type="text" name="username">单行输入
+        <span>密码:</span>
+        <input type="password" name="password"> -->
+
